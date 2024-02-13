@@ -73,4 +73,23 @@ const loginUser = asyncHandler(async (req, res) => {
   //   console.log(existingUser);
 });
 
-export { createUser, loginUser };
+const logoutCurrentUser = asyncHandler(async (req, res) => {
+  // Clear the JWT cookie by setting an empty value and an expiration date in the past
+  res.cookie("jwt", "", {
+    httpOnly: true,
+    expires: new Date(0),
+    // expires in the same second as logoutbuttonisclicked marking the end of session until the user logs in
+  });
+  //   We clear the JWT cookie during logout to invalidate the user's authentication session
+  // By setting an empty value and an expiration date in the past for the JWT cookie, we ensure that subsequent requests made with the token are rejected
+
+  res.status(200).json({ message: "Logged out successfully" });
+});
+
+const getAllUsers = asyncHandler(async (req, res) => {
+  // getting all the users
+  const users = await User.find({});
+  res.json(users);
+});
+
+export { createUser, loginUser, logoutCurrentUser, getAllUsers };
