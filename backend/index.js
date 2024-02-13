@@ -5,6 +5,7 @@ import path from "path";
 
 // files
 import connectDB from "./config/db.js";
+import userRoutes from "./routes/userRoutes.js";
 
 // configuration
 dotenv.config();
