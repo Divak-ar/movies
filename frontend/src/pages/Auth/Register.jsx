@@ -37,6 +37,8 @@ const Register = () => {
       toast.error("Password do not match");
     } else {
       try {
+        // using register(users.js resgitser mutation) from rtk query and username, email and password to backend as data
+        //  setcredentials is used to set the localstorage (reducer)
         const res = await register({ username, email, password }).unwrap();
         dispatch(setCredentials({ ...res }));
         navigate(redirect);

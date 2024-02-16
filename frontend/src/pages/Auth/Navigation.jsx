@@ -26,7 +26,9 @@ const Navigation = () => {
 
   const logoutHandler = async () => {
     try {
+      // Call the logout API endpoint and unwrap the promise
       await logoutApiCall().unwrap();
+      //  Dispatch the logout action to update the Redux store
       dispatch(logout());
       navigate("/login");
     } catch (error) {
