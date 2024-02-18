@@ -42,6 +42,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
+// rtk query builds the custom hooks by itself generally of format useFunction_name(Mutation/Query)
 export const {
   useLoginMutation,
   useRegisterMutation,
