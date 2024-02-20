@@ -60,7 +60,7 @@ const movieReview = async (req, res) => {
 
     if (movie) {
       // Check if user has already reviewed the movie
-      // .find(): Array method to find an element based on a condition.
+      // .find(): Array method to find an element based on a condition(just finding them based on their userid).
       const alreadyReviewed = movie.reviews.find(
         (r) => r.user.toString() === req.user._id.toString()
       );
@@ -85,6 +85,8 @@ const movieReview = async (req, res) => {
       movie.rating =
         movie.reviews.reduce((acc, item) => item.rating + acc, 0) /
         movie.reviews.length;
+      // reduce is a powerful array method that iterates over each element and builds a single value based on a provided function.
+      // reduce iterates over reviews, adding their ratings to an accumulator, then divides by the total number of reviews to get the average rating.
 
       // Save the updated movie with the new review
       await movie.save();
@@ -151,6 +153,7 @@ const deleteComment = async (req, res) => {
 
 const getNewMovies = async (req, res) => {
   try {
+    // gives the last 10 created movies
     const newMovies = await Movie.find().sort({ createdAt: -1 }).limit(10);
     res.json(newMovies);
   } catch (error) {
@@ -160,9 +163,11 @@ const getNewMovies = async (req, res) => {
 
 const getTopMovies = async (req, res) => {
   try {
+    // top ten highest rated movies (-1 for desc order by default asc sorted)
     const topRatedMovies = await Movie.find()
       .sort({ numReviews: -1 })
       .limit(10);
+
     res.json(topRatedMovies);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -171,6 +176,9 @@ const getTopMovies = async (req, res) => {
 
 const getRandomMovies = async (req, res) => {
   try {
+    // Movie.aggregate: Uses the Mongoose aggregation framework for complex data manipulation.
+    // [{ $sample: { size: 10 } }]: This aggregation pipeline: Employs the $sample operator to randomly select documents from the Movie collection.
+    // Specifies a size of 10, indicating the number of random movies to retrieve.
     const randomMovies = await Movie.aggregate([{ $sample: { size: 10 } }]);
     res.json(randomMovies);
   } catch (error) {
