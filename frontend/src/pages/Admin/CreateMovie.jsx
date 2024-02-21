@@ -44,6 +44,83 @@ const CreateMovie = () => {
     }
   }, [genres]);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "genre") {
+      const selectedGenre = genres.find((genre) => genre.name === value);
+
+      setMovieData((prevData) => ({
+        ...prevData,
+        genre: selectedGenre ? selectedGenre._id : "",
+      }));
+    } else {
+      setMovieData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedImage(file);
+  };
+
+  const handleCreateMovie = async () => {
+    try {
+      if (
+        !movieData.name ||
+        !movieData.year ||
+        !movieData.detail ||
+        !movieData.cast ||
+        !selectedImage
+      ) {
+        toast.error("Please fill all required fields");
+        return;
+      }
+
+      let uploadedImagePath = null;
+
+      if (selectedImage) {
+        const formData = new FormData();
+        formData.append("image", selectedImage);
+
+        const uploadImageResponse = await uploadImage(formData);
+
+        if (uploadImageResponse.data) {
+          uploadedImagePath = uploadImageResponse.data.image;
+        } else {
+          console.error("Failed to upload image: ", uploadImageErrorDetails);
+          toast.error("Failed to upload image");
+          return;
+        }
+
+        await createMovie({
+          ...movieData,
+          image: uploadedImagePath,
+        });
+
+        navigate("/admin/movies-list");
+
+        setMovieData({
+          name: "",
+          year: 0,
+          detail: "",
+          cast: [],
+          ratings: 0,
+          image: null,
+          genre: "",
+        });
+
+        toast.success("Movie Added To Database");
+      }
+    } catch (error) {
+      console.error("Failed to create movie: ", createMovieErrorDetail);
+      toast.error(`Failed to create movie: ${createMovieErrorDetail?.message}`);
+    }
+  };
+
   return (
     <div className="container flex justify-center items-center mt-4">
       <form>
